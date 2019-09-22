@@ -10,6 +10,7 @@ public class InfoCommand extends Command {
         this.name = "info";
         this.aliases = new String[]{"about"};
         this.help = "Get basic info about the bot";
+        this.guildOnly = true;
     }
 	
     @Override

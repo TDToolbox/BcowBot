@@ -17,6 +17,7 @@ public class UserInfoCommand extends Command {
         this.name = "userinfo";
         this.aliases = new String[]{"ui"};
         this.help = "Get info abot an user or yourself";
+        this.guildOnly = true;
     }
 	
     @Override
