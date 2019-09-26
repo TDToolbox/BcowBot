@@ -23,14 +23,18 @@ import net.dv8tion.jda.api.entities.Activity;
 
 public class BcowBot {
 
-	private static RethinkDB r = RethinkDB.r;
 	private static Connection db;
 	private static Logger logger = LoggerFactory.getLogger(BcowBot.class);
 	
-	private static DatabaseManager databaseManager;
-	
 	public static void main(String[] args) throws LoginException, InterruptedException {
-		init();
+		if (Config.getDevEnv()) {
+			logger.info("Dev Bcow starting..");
+			devInit();
+		}
+		else {
+			logger.info("Prod Bcow starting..");
+			init();
+		}
 	}
 	
 	public static void init() throws LoginException, InterruptedException {
@@ -41,7 +45,7 @@ public class BcowBot {
 		// Create new Database connection
 		db = new DatabaseManager().initDatabase();
 		
-		cbuilder.setActivity(Activity.playing("with Mallis"));
+		cbuilder.setActivity(Activity.playing(Config.STATUS));
 		cbuilder.setStatus(OnlineStatus.ONLINE);
 		cbuilder.setOwnerId(Config.OWNER);
 		cbuilder.setPrefix(Config.PREFIX);
@@ -53,6 +57,30 @@ public class BcowBot {
 	    
 	    builder.addEventListeners(waiter, cbuilder.build(), new MainListener());
 	    // Build the JDA instance
+	    logger.info("Build called");
+	    builder.build();
+	}
+	
+	public static void devInit() throws LoginException, InterruptedException {
+		// Create CommandClient instance
+		CommandClientBuilder cbuilder = new CommandClientBuilder();
+		// Create new EventWaiter
+		EventWaiter waiter = new EventWaiter();
+		// Create new Database connection
+		db = new DatabaseManager().initDatabase();
+		
+		cbuilder.setOwnerId(Config.OWNER);
+		cbuilder.setPrefix(Config.DEV_PREFIX);
+		cbuilder.setActivity(Activity.playing(Config.STATUS));
+		
+		cbuilder.addCommands(new UserInfoCommand(), new SuggestCommand(), new SuggestionRemoveCommand());
+		
+		// Create new JDA instance
+	    JDABuilder builder = new JDABuilder(Config.TOKEN);
+	    
+	    builder.addEventListeners(waiter, cbuilder.build(), new MainListener());
+	    // Build the JDA instance
+	    logger.info("Build called");
 	    builder.build();
 	}
 	

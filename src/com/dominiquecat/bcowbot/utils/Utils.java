@@ -10,17 +10,13 @@ import net.dv8tion.jda.api.entities.Member;
 public class Utils {
 
 	public static Member FindMember(CommandEvent event, String members) {
-		List<Member> members_found = FinderUtil.findMembers(members, event.getGuild());
-		
-		if (members_found.size() > 1 && !members.isEmpty()) {
-			event.reply("Too many users.. Please have only one user.");
-			return null;
-		}
-		if (members_found.size() == 1) {
-			return members_found.get(0);
+		if (members.isEmpty()) {
+			return event.getMember();
 		}
 		
-		return event.getMember();
+		Member found = FinderUtil.findMembers(members, event.getGuild()).get(0);
+		
+		return found;
 	}
 	
 }
